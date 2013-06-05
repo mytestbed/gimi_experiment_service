@@ -15,14 +15,14 @@ At this stage the best course of action is to clone the repository
     % export OMF_SFA_HOME=`pwd`
     % bundle install
     % cd ..
-    % git clone https://github.com/mytestbed/gimi-exp-service.git
+    % git clone https://github.com/mytestbed/gimi_experiment_service.git
     
 Starting the Service
 --------------------
 
 To start an AM with a some pre-populated resources ('--test-load-am') from this directory, run the following:
 
-    % cd gimi-exp-service
+    % cd gimi_experiment_service
     % ruby -I lib -I $OMF_SFA_HOME --test-load-state  --dm-auto-upgrade --disable-https start
     
 which should result in something like:
