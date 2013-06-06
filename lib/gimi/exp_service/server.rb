@@ -63,6 +63,8 @@ module GIMI::ExperimentService
 
       require 'gimi/resource/experiment'
       e1 = GIMI::Resource::Experiment.create(:name => 'exp1', :project => pA)
+      e1.iticket = GIMI::Resource::ITicket.create()
+      e1.save
 
       require 'omf-sfa/resource/user'
       u1 = OMF::SFA::Resource::User.create(:name => 'user1')

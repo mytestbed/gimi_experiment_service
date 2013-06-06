@@ -7,6 +7,8 @@ module GIMI::Resource
   # This class represents a user in the system.
   #
   class Experiment < OMF::SFA::Resource::OResource
+    oproperty :iticket, GIMI::Resource::ITicket
+
     belongs_to :project, OMF::SFA::Resource::Project, :required => false
 
     def to_hash_long(h, objs, opts = {})
