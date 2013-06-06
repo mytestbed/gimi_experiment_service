@@ -23,7 +23,7 @@ Starting the Service
 To start an AM with a some pre-populated resources ('--test-load-am') from this directory, run the following:
 
     % cd gimi_experiment_service
-    % ruby -I lib -I $OMF_SFA_HOME/lib --test-load-state  --dm-auto-upgrade --disable-https start
+    % ruby -I lib -I $OMF_SFA_HOME/lib lib/gimi/exp_service.rb --test-load-state  --dm-auto-upgrade --disable-https start
     
 which should result in something like:
 
