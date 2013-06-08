@@ -16,7 +16,7 @@ module GIMI::ExperimentService
     end
 
     def find_handler(path, opts)
-      puts "experiment:find_handler: path; '#{path}' opts: #{opts}"
+      debug "experiment:find_handler: path; '#{path}' opts: #{opts}"
       experiment_id = opts[:resource_uri] = path.shift
       if experiment_id
         experiment = opts[:experiment] = find_resource(experiment_id, GIMI::Resource::Experiment)
@@ -24,11 +24,11 @@ module GIMI::ExperimentService
       return self if path.empty?
 
       comp = path.shift
-      raise UnknownUserException.new "Unknown sub collection '#{comp}' for experiment '#{experiment_id}'."
+      raise OMF::SFA::AM::Rest::UnknownResourceException.new "Unknown sub collection '#{comp}' for experiment '#{experiment_id}'."
     end
 
     def on_get(experiment_uri, opts)
-      debug 'get: experiment_uri: "', experiment_uri, '"'
+      debug 'GET: experiment_uri: "', experiment_uri, '"'
       if experiment_uri
         experiment = opts[:experiment]
         show_resource_status(experiment, opts)
@@ -38,17 +38,37 @@ module GIMI::ExperimentService
       end
     end
 
-    # def on_put(experiment_uri, opts)
-      # experiment = opts[:experiment] = OMF::SFA::experiment::Sliver.first_or_create(:name => opts[:experiment_id])
-      # configure_sliver(sliver, opts)
-      # show_sliver_status(sliver, opts)
-    # end
+    def on_post(experiment_uri, opts)
+      debug 'POST: experiment_uri: "', experiment_uri, '" - ', opts.inspect
+      description, format = parse_body(opts, [:json])
+
+      if experiment_uri
+        experiment = opts[:experiment]
+        modify_experiment(experiment, opts)
+      else
+        create_experiment(description, opts)
+      end
+
+      show_experiments(opts)
+    end
 
     def on_delete(experiment_uri, opts)
-      experiment = opts[:experiment]
-      @am_manager.delete_experiment(experiment)
-
-      show_experiment_status(nil, opts)
+      if experiment = opts[:experiment]
+        debug "Delete experiment #{experiment}"
+        project = experiment.project
+        experiment.destroy
+      else
+        # Delete ALL experiments for project
+        unless project = opts[:project]
+          raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
+        end
+        project.experiments.each do |ex|
+          debug "Delete experiment #{ex}"
+          ex.destroy
+        end
+      end
+      project.reload
+      show_experiments(opts)
     end
 
     # SUPPORTING FUNCTIONS
@@ -68,27 +88,38 @@ module GIMI::ExperimentService
           a.to_hash_brief(:href_use_class_prefix => true)
         end
       }
-
       ['application/json', JSON.pretty_generate({:experiments_response => res})]
     end
 
-    # Configure the state of +experiment+ according to information
-    # in the http +req+.
+    # Create a new experiment within a project. The experiment properties are
+    # contained in 'description'
     #
-    # Note: It doesn't actually modify the experiment directly, but parses the
-    # the body and delegates the individual entries to the relevant
-    # sub collections, like 'experiments', 'experiments', ...
-    #
-    def configure_experiment(experiment, opts)
-      doc, format = parse_body(opts)
-      case format
-      when :xml
-        doc.xpath("//r:experiments", 'r' => 'http://schema.mytestbed.net/am_rest/0.1').each do |rel|
-          @res_handler.put_components_xml(rel, opts)
-        end
-      else
-        raise BadRequestException.new "Unsupported message format '#{format}'"
-      end
+    def create_experiment(description, opts)
+     unless project = opts[:project]
+       raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
+     end
+     debug "CREATE: #{description.class}--#{description}"
+     # Should start with 'experiments'
+     unless exl = description['experiments']
+       raise OMF::SFA::AM::Rest::BadRequestException.new "Expected '{'experiments':[..]}' but got '#{description}'"
+     end
+     unless exl.is_a? Enumerable
+       raise OMF::SFA::AM::Rest::BadRequestException.new "Expected array in '{'experiments':[..]}' but got '#{exl.class}'"
+     end
+     exl.each do |ed|
+       if uuid = ed['uuid']
+         exp = GIMI::Resource::Experiment.first(uuid: uuid)
+       elsif name = ed['name']
+         exp = GIMI::Resource::Experiment.first(name: name, project: project)
+       end
+       if exp
+         # TODO: Modify experiment
+       else
+         # CREATE experiment
+         ed[:project] = project
+         exp = GIMI::Resource::Experiment.create(ed)
+       end
+     end
     end
 
   end

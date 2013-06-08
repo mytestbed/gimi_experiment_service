@@ -1,0 +1,8 @@
+// curl -X POST -F 'body=<test/new_experiment_blank.json' http://localhost:8002/projets/projectA/experiments
+{
+  "experiments": [
+    {
+    }
+  ]
+}
+

@@ -1,0 +1,9 @@
+// curl -X POST -F 'body=<test/new_experiment.json' http://localhost:8002/projets/projectA/experiments
+{
+  "experiments": [
+    {
+      "name": "exp3"
+    }
+  ]
+}
+
