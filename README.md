@@ -43,121 +43,109 @@ resources. To list all projects:
 
     $ curl http://localhost:8002/projects
     {
-      "projects_response": {
-        "about": "/projects",
-        "projects": [
-          {
-            "name": "projectA",
-            "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
-            "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906"
-          },
-          {
-            "name": "projectB",
-            "uuid": "659b0aa4-de8a-49e2-9775-213feb74a74b",
-            "href": "/projects/659b0aa4-de8a-49e2-9775-213feb74a74b"
-          }
-        ]
-      }
+      "about": "/projects",
+      "projects": [
+        {
+          "name": "projectA",
+          "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
+          "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906"
+        },
+        {
+          "name": "projectB",
+          "uuid": "659b0aa4-de8a-49e2-9775-213feb74a74b",
+          "href": "/projects/659b0aa4-de8a-49e2-9775-213feb74a74b"
+        }
+      ]
     }
     
 To list information about a specific project 'projectA', use the following:
 
     $ curl http://localhost:8002/projects/projectA
     {
-      "project_response": {
-        "about": "/projects/projectA",
-        "type": "project",
-        "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
-        "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
-        "name": "projectA",
-        "users": [
-          {
-            "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
-            "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
-            "name": "user1",
-            "type": "user"
-          }
-        ],
-        "experiments": [
-          {
-            "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "name": "exp1",
-            "type": "experiment"
-          }
-        ]
-      }
+      "about": "/projects/projectA",
+      "type": "project",
+      "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
+      "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
+      "name": "projectA",
+      "users": [
+        {
+          "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
+          "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
+          "name": "user1",
+          "type": "user"
+        }
+      ],
+      "experiments": [
+        {
+          "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "name": "exp1",
+          "type": "experiment"
+        }
+      ]
     }
 
 More information about the users associated with a project can be obtained through:
 
     $ curl http://localhost:8002/projects/projectA/users
     {
-      "users_response": {
-        "about": "/projects/projectA/users",
-        "users": [
-          {
-            "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
-            "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
-            "name": "user1",
-            "type": "user"
-          }
-        ]
-      }
+      "about": "/projects/projectA/users",
+      "users": [
+        {
+          "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
+          "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
+          "name": "user1",
+          "type": "user"
+        }
+      ]
     }
     
 The experiments created under a project can be obtained similarly:
 
     $ curl http://localhost:8002/projects/projectA/experiments
     {
-      "experiments_response": {
-        "about": "/projects/projectA/experiments",
-        "experiments": [
-          {
-            "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "name": "exp1",
-            "type": "experiment"
-          }
-        ]
-      }
+      "about": "/projects/projectA/experiments",
+      "experiments": [
+        {
+          "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "name": "exp1",
+          "type": "experiment"
+        }
+      ]
     }
     
 Exploring the experiments held by the service follows the same lines:
 
     $ curl http://localhost:8002/experiments
     {
-      "experiments_response": {
-        "about": "/experiments",
-        "experiments": [
-          {
-            "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-            "name": "exp1",
-            "type": "experiment"
-          }
-        ]
-      }
+      "about": "/experiments",
+      "experiments": [
+        {
+          "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+          "name": "exp1",
+          "type": "experiment"
+        }
+      ]
     }
     
     $ curl http://localhost:8002/experiments/exp1
     {
-      "experiment_response": {
-        "about": "/experiments/exp1",
-        "type": "experiment",
-        "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-        "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
-        "name": "exp1",
-        "iticket": {
-          "created_at": "2013-06-06 11:23:49 +1000",
-          "valid_until": "2013-09-14 11:23:49 +1000"
-        },
-        "project": {
-          "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
-          "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
-          "name": "projectA",
-          "type": "project"
-        }
+      "about": "/experiments/exp1",
+      "type": "experiment",
+      "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+      "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
+      "name": "exp1",
+      "iticket": {
+        "created_at": "2013-06-06 11:23:49 +1000",
+        "valid_until": "2013-09-14 11:23:49 +1000"
+      },
+      "project": {
+        "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
+        "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
+        "name": "projectA",
+        "type": "project"
       }
     }
     
@@ -165,48 +153,44 @@ And not surprisingly, the same works for users:
 
     $ curl http://localhost:8002/users
     {
-      "users_response": {
-        "about": "/users",
-        "users": [
-          {
-            "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
-            "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
-            "name": "user1",
-            "type": "user"
-          },
-          {
-            "uuid": "817dee4d-42dd-4d2e-b41e-c4f0a8b0750a",
-            "href": "/users/817dee4d-42dd-4d2e-b41e-c4f0a8b0750a",
-            "name": "user2",
-            "type": "user"
-          }
-        ]
-      }
+      "about": "/users",
+      "users": [
+        {
+          "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
+          "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
+          "name": "user1",
+          "type": "user"
+        },
+        {
+          "uuid": "817dee4d-42dd-4d2e-b41e-c4f0a8b0750a",
+          "href": "/users/817dee4d-42dd-4d2e-b41e-c4f0a8b0750a",
+          "name": "user2",
+          "type": "user"
+        }
+      ]
     }
     
     $ curl http://localhost:8002/users/user1
     {
-      "user_response": {
-        "about": "/users/user1",
-        "type": "user",
-        "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
-        "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
-        "name": "user1",
-        "projects": [
-          {
-            "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
-            "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
-            "name": "projectA",
-            "type": "project"
-          },
-          {
-            "uuid": "659b0aa4-de8a-49e2-9775-213feb74a74b",
-            "href": "/projects/659b0aa4-de8a-49e2-9775-213feb74a74b",
-            "name": "projectB",
-            "type": "project"
-          }
-        ]
-      }
+      "about": "/users/user1",
+      "type": "user",
+      "uuid": "ce0a32d2-b95e-4701-890e-7db734c39451",
+      "href": "/users/ce0a32d2-b95e-4701-890e-7db734c39451",
+      "name": "user1",
+      "projects": [
+        {
+          "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
+          "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
+          "name": "projectA",
+          "type": "project"
+        },
+        {
+          "uuid": "659b0aa4-de8a-49e2-9775-213feb74a74b",
+          "href": "/projects/659b0aa4-de8a-49e2-9775-213feb74a74b",
+          "name": "projectB",
+          "type": "project"
+        }
+      ]
     }    
 
 ### Adding and Modifying Resources
@@ -219,17 +203,15 @@ empty POST message to the _experiments_ collection:
 
     $ curl-X POST http://localhost:8002/projects/projectB/experiments
     {
-      "experiments_response": {
-        "about": "/projects/projectB/experiments",
-        "experiments": [
-          {
-            "uuid": "f0eac3fb-58b0-464e-acfb-91c0ab099f62",
-            "href": "/experiments/f0eac3fb-58b0-464e-acfb-91c0ab099f62",
-            "name": "r70156238177740",
-            "type": "experiment"
-          }
-        ]
-      }
+      "about": "/projects/projectB/experiments",
+      "experiments": [
+        {
+          "uuid": "f0eac3fb-58b0-464e-acfb-91c0ab099f62",
+          "href": "/experiments/f0eac3fb-58b0-464e-acfb-91c0ab099f62",
+          "name": "r70156238177740",
+          "type": "experiment"
+        }
+      ]
     }
     
 If we want to create an experiment with a predefined state, or modify an existing one, the following message 
@@ -244,35 +226,32 @@ or modify an existing experiment within _projectA_ with _name_ set to _exp3_.
     
     $ curl -X POST -H "Content-Type: application/json" --data-binary @test/new_expriment.json http://localhost:8002/projects/projectB/experiments
     {
-      "experiments_response": {
-        "about": "/projects/projectB/experiments",
-        "experiments": [
-          ...
-          {
-            "uuid": "b84907c6-2b47-4c74-adae-45fb69c85841",
-            "href": "/experiments/b84907c6-2b47-4c74-adae-45fb69c85841",
-            "name": "exp3",
-            "type": "experiment"
-          }
-        ]
-      }
+      "about": "/projects/projectB/experiments",
+      "experiments": [
+        ...
+        {
+          "uuid": "b84907c6-2b47-4c74-adae-45fb69c85841",
+          "href": "/experiments/b84907c6-2b47-4c74-adae-45fb69c85841",
+          "name": "exp3",
+          "type": "experiment"
+        }
+      ]
     }
 
 The same can also be achieved with a form encoded POST message:
 
-    $ curl -XPOST -d name=exp4 http://localhost:8002/projects/projectB/experiments{
-      "experiments_response": {
-        "about": "/projects/projectB/experiments",
-        "experiments": [
-          ...
-          {
-            "uuid": "78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
-            "href": "/experiments/78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
-            "name": "exp4",
-            "type": "experiment"
-          }
-        ]
-      }
+    $ curl -XPOST -d name=exp4 http://localhost:8002/projects/projectB/experiments
+    {
+      "about": "/projects/projectB/experiments",
+      "experiments": [
+        ...
+        {
+          "uuid": "78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
+          "href": "/experiments/78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
+          "name": "exp4",
+          "type": "experiment"
+        }
+      ]
     }
     
 ### Deleting Resources
@@ -280,32 +259,18 @@ The same can also be achieved with a form encoded POST message:
 To delete a specific resource, simply send a `DELETE` message to its URL. For instance, to delete the above create _exp4_ 
 issue the following `curl` command.
 
-    $ curl -X DELETE http://localhost:8002/projects/projectB/experiments/exp4
+    $ curl  -X DELETE http://localhost:8002/projects/projectA/experiments/exp1
     {
-      "experiments_response": {
-        "about": "/projects/projectB/experiments",
-        "experiments": [
-          {
-            "uuid": "303fa157-265a-4805-93c9-429fe73e702d",
-            "href": "/experiments/303fa157-265a-4805-93c9-429fe73e702d",
-            "name": "exp1",
-            "type": "experiment"
-          },
-          {
-            "uuid": "bb34d801-7a2a-46f5-bb66-96cef238dfc9",
-            "href": "/experiments/bb34d801-7a2a-46f5-bb66-96cef238dfc9",
-            "name": "exp3",
-            "type": "experiment"
-          }
-        ]
-      }
+      "uuid": "ed4c13cb-6a07-4cea-9116-4d41064d68d8",
+      "deleted": true
     }
 
 To delete ALL experiments for a project, send the `DELETE` message to the experiments collection.
 
-{
-  "experiments_response": {
-    "about": "/projects/projectB/experiments",
-    "experiments": []
-  }
-}
+    $ curl  -X DELETE http://localhost:8002/projects/projectA/experiments
+    {
+      "uuids": [
+        "7fbf9cf1-854c-4c74-8bb4-51cee2b00e93"
+      ],
+      "deleted": true
+    }
