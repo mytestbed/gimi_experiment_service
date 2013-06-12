@@ -47,93 +47,28 @@ module GIMI::ExperimentService
       end
     end
 
-    # def on_put(project_uri, opts)
-      # project = opts[:project] = OMF::SFA::user::Sliver.first_or_create(:name => opts[:project_id])
-      # configure_sliver(sliver, opts)
-      # show_sliver_status(sliver, opts)
-    # end
-
     def on_delete(project_uri, opts)
-      project = opts[:project]
-      @am_manager.delete_project(project)
-
-      show_project_status(nil, opts)
+      if project_uri
+        project = opts[:project]
+        debug "Delete project #{project}"
+        res = show_deleted_resource(project.uuid)
+        project.destroy
+      else
+        # Delete ALL projects
+        raise OMF::SFA::AM::Rest::BadRequestException.new "I'm sorry, Dave. I'm afraid I can't do that."
+      end
+      project.reload
+      return res
     end
 
     # SUPPORTING FUNCTIONS
 
-    # def show_project_status(project, opts)
-      # if project
-        # p = opts[:req].path.split('/')[0 .. -2]
-        # p << project.uuid.to_s
-        # prefix = about = p.join('/')
-        # res = {
-          # :about => about,
-          # :type => 'project',
-          # :properties => {
-              # #:href => prefix + '/properties',
-              # :expires_at => (Time.now + 600).rfc2822
-          # },
-          # :users => {:href => prefix + '/users'},
-          # :experiments => {:href => prefix + '/experiments'},
-        # }
-      # else
-        # res = {:error => 'Unknown project'}
-      # end
-#
-      # ['application/json', JSON.pretty_generate({:project_response => res})]
-    # end
 
     def show_projects(opts)
       authenticator = Thread.current["authenticator"]
-      prefix = about = opts[:req].path
-      projects = OMF::SFA::Resource::Project.all().collect do |a|
-        {
-          :name => a.name,
-          #:urn => a.urn,
-          :uuid => uuid = a.uuid.to_s,
-          :href => prefix + '/' + uuid
-        }
-      end
-      res = {
-        :about => opts[:req].path,
-        :projects => projects
-      }
-
-      ['application/json', JSON.pretty_generate({:projects_response => res})]
+      projects = OMF::SFA::Resource::Project.all()
+      show_resources(projects, :projects, opts)
     end
 
-    # Configure the state of +project+ according to information
-    # in the http +req+.
-    #
-    # Note: It doesn't actually modify the project directly, but parses the
-    # the body and delegates the individual entries to the relevant
-    # sub collections, like 'users', 'experiments', ...
-    #
-    def configure_project(project, opts)
-      doc, format = parse_body(opts)
-      case format
-      when :xml
-        doc.xpath("//r:users", 'r' => 'http://schema.mytestbed.net/am_rest/0.1').each do |rel|
-          @res_handler.put_components_xml(rel, opts)
-        end
-      else
-        raise BadRequestException.new "Unsupported message format '#{format}'"
-      end
-    end
-
-    # def find_project(project_id)
-      # if project_id.start_with?('urn')
-        # fopts = {:urn => project_id}
-      # else
-        # begin
-          # fopts = {:uuid => UUIDTools::UUID.parse(project_id)}
-        # rescue ArgumentError
-          # fopts = {:name => project_id}
-        # end
-      # end
-      # authenticator = Thread.current["authenticator"]
-      # project = OMF::SFA::Resource::Project.first(fopts)
-    # end
   end
 end

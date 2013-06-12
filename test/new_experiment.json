@@ -1,8 +1,4 @@
 // curl -X POST -H "Content-Type: application/json" --data-binary @test/new_experiment.json http://localhost:8002/projects/projectA/experiments
 {
-  "experiments": [
-    {
-      "name": "exp3"
-    }
-  ]
+  "name": "exp3"
 }

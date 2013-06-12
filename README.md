@@ -148,6 +148,10 @@ Exploring the experiments held by the service follows the same lines:
         "uuid": "fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
         "href": "/experiments/fefe295d-4b94-44fa-80c7-0473a9b6b0d4",
         "name": "exp1",
+        "iticket": {
+          "created_at": "2013-06-06 11:23:49 +1000",
+          "valid_until": "2013-09-14 11:23:49 +1000"
+        },
         "project": {
           "uuid": "989700ca-0bab-4216-9e9d-deb685425906",
           "href": "/projects/989700ca-0bab-4216-9e9d-deb685425906",
@@ -205,3 +209,103 @@ And not surprisingly, the same works for users:
       }
     }    
 
+### Adding and Modifying Resources
+
+To create a new resource in the context of an existing project, we need to send a POST 
+command to the _experiments_ collection.
+
+The simplest way is to request a new experiment with everything set to its default is to send an 
+empty POST message to the _experiments_ collection: 
+
+    $ curl-X POST http://localhost:8002/projects/projectB/experiments
+    {
+      "experiments_response": {
+        "about": "/projects/projectB/experiments",
+        "experiments": [
+          {
+            "uuid": "f0eac3fb-58b0-464e-acfb-91c0ab099f62",
+            "href": "/experiments/f0eac3fb-58b0-464e-acfb-91c0ab099f62",
+            "name": "r70156238177740",
+            "type": "experiment"
+          }
+        ]
+      }
+    }
+    
+If we want to create an experiment with a predefined state, or modify an existing one, the following message 
+content will achieve that:
+
+    {
+      "name": "exp3"
+    }
+    
+If that message is stored in a file `test/new_expriment.json`, the following curl command will create a new
+or modify an existing experiment within _projectA_ with _name_ set to _exp3_.
+    
+    $ curl -X POST -H "Content-Type: application/json" --data-binary @test/new_expriment.json http://localhost:8002/projects/projectB/experiments
+    {
+      "experiments_response": {
+        "about": "/projects/projectB/experiments",
+        "experiments": [
+          ...
+          {
+            "uuid": "b84907c6-2b47-4c74-adae-45fb69c85841",
+            "href": "/experiments/b84907c6-2b47-4c74-adae-45fb69c85841",
+            "name": "exp3",
+            "type": "experiment"
+          }
+        ]
+      }
+    }
+
+The same can also be achieved with a form encoded POST message:
+
+    $ curl -XPOST -d name=exp4 http://localhost:8002/projects/projectB/experiments{
+      "experiments_response": {
+        "about": "/projects/projectB/experiments",
+        "experiments": [
+          ...
+          {
+            "uuid": "78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
+            "href": "/experiments/78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
+            "name": "exp4",
+            "type": "experiment"
+          }
+        ]
+      }
+    }
+    
+### Deleting Resources
+
+To delete a specific resource, simply send a `DELETE` message to its URL. For instance, to delete the above create _exp4_ 
+issue the following `curl` command.
+
+    $ curl -X DELETE http://localhost:8002/projects/projectB/experiments/exp4
+    {
+      "experiments_response": {
+        "about": "/projects/projectB/experiments",
+        "experiments": [
+          {
+            "uuid": "303fa157-265a-4805-93c9-429fe73e702d",
+            "href": "/experiments/303fa157-265a-4805-93c9-429fe73e702d",
+            "name": "exp1",
+            "type": "experiment"
+          },
+          {
+            "uuid": "bb34d801-7a2a-46f5-bb66-96cef238dfc9",
+            "href": "/experiments/bb34d801-7a2a-46f5-bb66-96cef238dfc9",
+            "name": "exp3",
+            "type": "experiment"
+          }
+        ]
+      }
+    }
+
+To delete ALL experiments for a project, send the `DELETE` message to the experiments collection.
+
+{
+  "experiments_response": {
+    "about": "/projects/projectB/experiments",
+    "experiments": []
+  }
+}

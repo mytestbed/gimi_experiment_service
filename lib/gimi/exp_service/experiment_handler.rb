@@ -40,86 +40,76 @@ module GIMI::ExperimentService
 
     def on_post(experiment_uri, opts)
       debug 'POST: experiment_uri: "', experiment_uri, '" - ', opts.inspect
-      description, format = parse_body(opts, [:json])
+      description, format = parse_body(opts, [:json, :form])
 
       if experiment_uri
         experiment = opts[:experiment]
         modify_experiment(experiment, opts)
       else
-        create_experiment(description, opts)
+        experiment = create_experiment(description, opts)
       end
 
-      show_experiments(opts)
+      show_resource_status(experiment, opts)
     end
 
     def on_delete(experiment_uri, opts)
       if experiment = opts[:experiment]
         debug "Delete experiment #{experiment}"
         project = experiment.project
+        res = show_deleted_resource(experiment.uuid)
         experiment.destroy
       else
         # Delete ALL experiments for project
         unless project = opts[:project]
           raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
         end
-        project.experiments.each do |ex|
+        uuid_a = project.experiments.map do |ex|
           debug "Delete experiment #{ex}"
+          uuid = ex.uuid
           ex.destroy
+          uuid
         end
+        res = show_deleted_resources(uuid_a)
       end
       project.reload
-      show_experiments(opts)
+      return res
     end
 
     # SUPPORTING FUNCTIONS
 
 
     def show_experiments(opts)
-      authenticator = Thread.current["authenticator"]
-      prefix = about = opts[:req].path
+      # authenticator = Thread.current["authenticator"]
       if project = opts[:project]
         experiments = project.experiments
       else
         experiments = GIMI::Resource::Experiment.all()
       end
-      res = {
-        :about => opts[:req].path,
-        :experiments => experiments.map do |a|
-          a.to_hash_brief(:href_use_class_prefix => true)
-        end
-      }
-      ['application/json', JSON.pretty_generate({:experiments_response => res})]
+      show_resources(experiments, :experiments, opts)
     end
 
     # Create a new experiment within a project. The experiment properties are
     # contained in 'description'
     #
     def create_experiment(description, opts)
-     unless project = opts[:project]
-       raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
-     end
-     debug "CREATE: #{description.class}--#{description}"
-     # Should start with 'experiments'
-     unless exl = description['experiments']
-       raise OMF::SFA::AM::Rest::BadRequestException.new "Expected '{'experiments':[..]}' but got '#{description}'"
-     end
-     unless exl.is_a? Enumerable
-       raise OMF::SFA::AM::Rest::BadRequestException.new "Expected array in '{'experiments':[..]}' but got '#{exl.class}'"
-     end
-     exl.each do |ed|
-       if uuid = ed['uuid']
-         exp = GIMI::Resource::Experiment.first(uuid: uuid)
-       elsif name = ed['name']
-         exp = GIMI::Resource::Experiment.first(name: name, project: project)
-       end
-       if exp
-         # TODO: Modify experiment
-       else
-         # CREATE experiment
-         ed[:project] = project
-         exp = GIMI::Resource::Experiment.create(ed)
-       end
-     end
+      unless project = opts[:project]
+        raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
+      end
+      debug "CREATE: #{description.class}--#{description}"
+      # Should start with 'experiments'
+      if uuid = description['uuid']
+        exp = GIMI::Resource::Experiment.first(uuid: uuid)
+      elsif name = description['name']
+        exp = GIMI::Resource::Experiment.first(name: name, project: project)
+      end
+      if exp
+        # TODO: Modify experiment
+      else
+        # CREATE experiment
+        description[:project] = project
+        exp = GIMI::Resource::Experiment.create(description)
+      end
+      return exp
     end
 
   end

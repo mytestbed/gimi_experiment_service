@@ -37,44 +37,13 @@ module GIMI::ExperimentService
       if user_uri
         user = opts[:user]
         show_resource_status(user, opts)
-        #show_user_status(user, opts)
       else
         show_users(opts)
       end
     end
 
-    # def on_put(user_uri, opts)
-      # user = opts[:user] = OMF::SFA::user::Sliver.first_or_create(:name => opts[:user_id])
-      # configure_sliver(sliver, opts)
-      # show_sliver_status(sliver, opts)
-    # end
-
-    def on_delete(user_uri, opts)
-      user = opts[:user]
-      @am_manager.delete_user(user)
-
-      show_user_status(nil, opts)
-    end
 
     # SUPPORTING FUNCTIONS
-
-    # def show_user_status(user, opts)
-      # if user
-        # p = opts[:req].path.split('/')[0 .. -2]
-        # p << user.uuid.to_s
-        # prefix = about = p.join('/')
-        # props = user.to_hash({}, :href_use_class_prefix => true)
-        # props.delete(:type)
-        # res = {
-          # :about => about,
-          # :type => 'user',
-        # }.merge!(props)
-      # else
-        # res = {:error => 'Unknown user'}
-      # end
-#
-      # ['application/json', JSON.pretty_generate({:user_response => res})]
-    # end
 
     def show_users(opts)
       authenticator = Thread.current["authenticator"]
@@ -84,39 +53,7 @@ module GIMI::ExperimentService
       else
         users = OMF::SFA::Resource::User.all()
       end
-      res = {
-        :about => opts[:req].path,
-        :users => users.map do |a|
-          a.to_hash_brief(:href_use_class_prefix => true)
-          # {
-            # :name => a.name,
-            # #:urn => a.urn,
-            # :uuid => uuid = a.uuid.to_s,
-            # :href => a.href() #prefix + '/' + uuid
-          # }
-        end
-      }
-
-      ['application/json', JSON.pretty_generate({:users_response => res})]
-    end
-
-    # Configure the state of +user+ according to information
-    # in the http +req+.
-    #
-    # Note: It doesn't actually modify the user directly, but parses the
-    # the body and delegates the individual entries to the relevant
-    # sub collections, like 'users', 'experiments', ...
-    #
-    def configure_user(user, opts)
-      doc, format = parse_body(opts)
-      case format
-      when :xml
-        doc.xpath("//r:users", 'r' => 'http://schema.mytestbed.net/am_rest/0.1').each do |rel|
-          @res_handler.put_components_xml(rel, opts)
-        end
-      else
-        raise BadRequestException.new "Unsupported message format '#{format}'"
-      end
+      show_resources(users, :users, opts)
     end
 
   end
