@@ -201,19 +201,21 @@ command to the _experiments_ collection.
 The simplest way is to request a new experiment with everything set to its default is to send an 
 empty POST message to the _experiments_ collection: 
 
-    $ curl-X POST http://localhost:8002/projects/projectB/experiments
+    $ curl -X POST http://localhost:8002/projects/projectB/experiments
     {
       "about": "/projects/projectB/experiments",
-      "experiments": [
-        {
-          "uuid": "f0eac3fb-58b0-464e-acfb-91c0ab099f62",
-          "href": "/experiments/f0eac3fb-58b0-464e-acfb-91c0ab099f62",
-          "name": "r70156238177740",
-          "type": "experiment"
-        }
-      ]
+      "type": "experiment",
+      "uuid": "dbb046d1-224a-47bc-aaf6-9a078b69195a",
+      "href": "/experiments/dbb046d1-224a-47bc-aaf6-9a078b69195a",
+      "name": "r70305982416100",
+      "project": {
+        "uuid": "148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "href": "/projects/148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "name": "projectB",
+        "type": "project"
+      }
     }
-    
+     
 If we want to create an experiment with a predefined state, or modify an existing one, the following message 
 content will achieve that:
 
@@ -224,34 +226,36 @@ content will achieve that:
 If that message is stored in a file `test/new_expriment.json`, the following curl command will create a new
 or modify an existing experiment within _projectA_ with _name_ set to _exp3_.
     
-    $ curl -X POST -H "Content-Type: application/json" --data-binary @test/new_expriment.json http://localhost:8002/projects/projectB/experiments
+    $ curl -X POST -H "Content-Type: application/json" --data-binary @test/new_experiment.json http://localhost:8002/projects/projectB/experiments
     {
       "about": "/projects/projectB/experiments",
-      "experiments": [
-        ...
-        {
-          "uuid": "b84907c6-2b47-4c74-adae-45fb69c85841",
-          "href": "/experiments/b84907c6-2b47-4c74-adae-45fb69c85841",
-          "name": "exp3",
-          "type": "experiment"
-        }
-      ]
+      "type": "experiment",
+      "uuid": "51360cdd-3a7c-41ab-82da-859d22fd1a89",
+      "href": "/experiments/51360cdd-3a7c-41ab-82da-859d22fd1a89",
+      "name": "exp3",
+      "project": {
+        "uuid": "148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "href": "/projects/148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "name": "projectB",
+        "type": "project"
+      }
     }
-
+                  
 The same can also be achieved with a form encoded POST message:
 
     $ curl -XPOST -d name=exp4 http://localhost:8002/projects/projectB/experiments
     {
       "about": "/projects/projectB/experiments",
-      "experiments": [
-        ...
-        {
-          "uuid": "78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
-          "href": "/experiments/78ef3e4a-9d64-440f-b5f5-5628c9d1c92e",
-          "name": "exp4",
-          "type": "experiment"
-        }
-      ]
+      "type": "experiment",
+      "uuid": "a2e9d2b6-bc94-4fb6-b276-3c8ec4e2f886",
+      "href": "/experiments/a2e9d2b6-bc94-4fb6-b276-3c8ec4e2f886",
+      "name": "exp4",
+      "project": {
+        "uuid": "148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "href": "/projects/148d90fb-cd9f-47a7-b38e-bff225214c3f",
+        "name": "projectB",
+        "type": "project"
+      }
     }
     
 ### Deleting Resources
