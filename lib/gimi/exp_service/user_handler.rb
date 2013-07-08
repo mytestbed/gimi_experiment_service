@@ -34,11 +34,11 @@ module GIMI::ExperimentService
     end
 
     def remove_resource_from_context(user, context)
-      puts (context.users.methods - Object.new.methods).sort
+      debug "REMOVE #{user} from #{context}"
       context.users.delete(user)
       context.save
-      debug "REMOVE #{user} from #{context}"
     end
+
 
   end
 end

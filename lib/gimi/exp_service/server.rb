@@ -1,4 +1,29 @@
 require 'rubygems'
+
+require 'json'
+# class Time
+  # def to_json(*args)
+    # {
+      # JSON.create_id => self.class.name,
+      # 's' => tv_sec,
+      # 'n' => respond_to?(:tv_nsec) ? tv_nsec : tv_usec * 1000
+    # }.to_json(*args)
+  # end
+#
+  # def self.json_create(object)
+    # if usec = object.delete('u') # used to be tv_usec -> tv_nsec
+      # object['n'] = usec * 1000
+    # end
+    # if instance_methods.include?(:tv_nsec)
+      # at(object['s'], Rational(object['n'], 1000))
+    # else
+      # at(object['s'], object['n'] / 1000)
+    # end
+  # end
+# end
+#
+# raise "JSON" unless JSON.load(Time.now.to_json).is_a? Time
+
 require 'rack'
 require 'rack/showexceptions'
 require 'thin'

@@ -35,5 +35,23 @@ module GIMI::ExperimentService
       show_resources(projects, :projects, opts)
     end
 
+    def on_delete(project_uri, opts)
+      if project = opts[:resource]
+        debug "Delete project #{project}"
+        res = show_deleted_resource(project.uuid)
+        project.destroy
+      else
+        # Remove all projects from user
+        unless (user = opts[:context]).is_a? OMF::SFA::Resource::User
+          raise OMF::SFA::AM::Rest::BadRequestException.new "Can only remove projects in the context of a user"
+        end
+        user.projects = []
+        user.save
+        user.reload
+        res = show_resource_status(user, opts)
+      end
+      return res
+    end
+
   end
 end

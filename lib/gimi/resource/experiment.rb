@@ -16,6 +16,8 @@ module GIMI::Resource
       super
       h[:project] = self.project.to_hash_brief(opts)
       h[:slices] = self.slices.map {|s| s.to_hash_brief(opts)}
+raise "JSON deserialisation no longer working" unless JSON.load(Time.now.to_json).is_a? Time
+puts ">>>> EXP"
       h
     end
 

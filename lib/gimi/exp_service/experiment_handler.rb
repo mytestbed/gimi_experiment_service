@@ -23,7 +23,6 @@ module GIMI::ExperimentService
         end,
         slices: (opts[:slice_handler] || SliceHandler.new(opts))
       }
-
     end
 
     def on_delete(experiment_uri, opts)
