@@ -11,57 +11,29 @@ module GIMI::ExperimentService
 
     def initialize(opts = {})
       super
+      @resource_class = GIMI::Resource::Experiment
+
+      # Define handlers
       opts[:experiment_handler] = self
-      @project_handler = opts[:project_handler] = ProjectHandler.new(opts)
-    end
+      @project_handler = opts[:project_handler] || ProjectHandler.new(opts)
+      @coll_handlers = {
+        project: lambda do |path, o| # This will force the showing of the SINGLE project
+          path.insert(0, o[:context].project.uuid.to_s)
+          @project_handler.find_handler(path, o)
+        end
+      }
 
-    def find_handler(path, opts)
-      debug "experiment:find_handler: path; '#{path}' opts: #{opts}"
-      experiment_id = opts[:resource_uri] = path.shift
-      if experiment_id
-        experiment = opts[:experiment] = find_resource(experiment_id, GIMI::Resource::Experiment)
-      end
-      return self if path.empty?
-
-      comp = path.shift
-      raise OMF::SFA::AM::Rest::UnknownResourceException.new "Unknown sub collection '#{comp}' for experiment '#{experiment_id}'."
-    end
-
-    def on_get(experiment_uri, opts)
-      debug 'GET: experiment_uri: "', experiment_uri, '"'
-      if experiment_uri
-        experiment = opts[:experiment]
-        show_resource_status(experiment, opts)
-        #show_experiment_status(experiment, opts)
-      else
-        show_experiments(opts)
-      end
-    end
-
-    def on_post(experiment_uri, opts)
-      debug 'POST: experiment_uri: "', experiment_uri, '" - ', opts.inspect
-      description, format = parse_body(opts, [:json, :form])
-
-      if experiment_uri
-        experiment = opts[:experiment]
-        modify_experiment(experiment, opts)
-      else
-        experiment = create_experiment(description, opts)
-      end
-
-      show_resource_status(experiment, opts)
     end
 
     def on_delete(experiment_uri, opts)
-      if experiment = opts[:experiment]
+      if experiment = opts[:resource]
         debug "Delete experiment #{experiment}"
-        project = experiment.project
         res = show_deleted_resource(experiment.uuid)
         experiment.destroy
       else
         # Delete ALL experiments for project
-        unless project = opts[:project]
-          raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
+        unless (project = opts[:context]).is_a? OMF::SFA::Resource::Project
+          raise OMF::SFA::AM::Rest::BadRequestException.new "Can only delete experiments in the context of a project"
         end
         uuid_a = project.experiments.map do |ex|
           debug "Delete experiment #{ex}"
@@ -70,17 +42,17 @@ module GIMI::ExperimentService
           uuid
         end
         res = show_deleted_resources(uuid_a)
+        project.reload
       end
-      project.reload
       return res
     end
 
     # SUPPORTING FUNCTIONS
 
 
-    def show_experiments(opts)
+    def show_resource_list(opts)
       # authenticator = Thread.current["authenticator"]
-      if project = opts[:project]
+      if project = opts[:context]
         experiments = project.experiments
       else
         experiments = GIMI::Resource::Experiment.all()
@@ -91,25 +63,18 @@ module GIMI::ExperimentService
     # Create a new experiment within a project. The experiment properties are
     # contained in 'description'
     #
-    def create_experiment(description, opts)
-      unless project = opts[:project]
+    def create_resource(description, opts)
+      unless (project = opts[:context]).is_a? OMF::SFA::Resource::Project
         raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
       end
-      debug "CREATE: #{description.class}--#{description}"
-      # Should start with 'experiments'
-      if uuid = description['uuid']
-        exp = GIMI::Resource::Experiment.first(uuid: uuid)
-      elsif name = description['name']
-        exp = GIMI::Resource::Experiment.first(name: name, project: project)
+      if name = description[:name]
+        if (res = @resource_class.first(name: name, project: project))
+          return modify_resource(res, description, opts)
+        end
       end
-      if exp
-        # TODO: Modify experiment
-      else
-        # CREATE experiment
-        description[:project] = project
-        exp = GIMI::Resource::Experiment.create(description)
-      end
-      return exp
+
+      description[:project] = project
+      super
     end
 
   end

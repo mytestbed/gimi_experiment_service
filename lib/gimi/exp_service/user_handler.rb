@@ -2,6 +2,7 @@
 require 'omf-sfa/am/am-rest/rest_handler'
 #require 'omf-sfa/am/am-rest/user_handler'
 require 'omf-sfa/resource/project'
+require 'uuid'
 
 module GIMI::ExperimentService
 
@@ -11,49 +12,32 @@ module GIMI::ExperimentService
 
     def initialize(opts = {})
       super
+      @resource_class = OMF::SFA::Resource::User
+      # Define handlers
       opts[:user_handler] = self
-      @project_handler = opts[:project_handler] = ProjectHandler.new(opts)
+      @coll_handlers = {
+        projects: (opts[:project_handler] || ProjectHandler.new(opts))
+      }
     end
-
-    def find_handler(path, opts)
-      puts "USER:find_handler: path; '#{path}' opts: #{opts}"
-      user_id = opts[:resource_uri] = path.shift
-      if user_id
-        user = opts[:user] = find_resource(user_id, OMF::SFA::Resource::User)
-      end
-      return self if path.empty?
-
-      case comp = path.shift
-      when 'projects'
-        opts[:resource_uri] = path.join('/')
-        #puts "user >>> '#{r}'::#{user.inspect}"
-        return @project_handler.find_handler(path, opts)
-      end
-      raise UnknownUserException.new "Unknown sub collection '#{comp}' for user '#{user_id}'."
-    end
-
-    def on_get(user_uri, opts)
-      debug 'get: user_uri: "', user_uri, '"'
-      if user_uri
-        user = opts[:user]
-        show_resource_status(user, opts)
-      else
-        show_users(opts)
-      end
-    end
-
 
     # SUPPORTING FUNCTIONS
 
-    def show_users(opts)
+    def show_resource_list(opts)
       authenticator = Thread.current["authenticator"]
       prefix = about = opts[:req].path
-      if project = opts[:project]
+      if project = opts[:context]
         users = project.users
       else
         users = OMF::SFA::Resource::User.all()
       end
       show_resources(users, :users, opts)
+    end
+
+    def remove_resource_from_context(user, context)
+      puts (context.users.methods - Object.new.methods).sort
+      context.users.delete(user)
+      context.save
+      debug "REMOVE #{user} from #{context}"
     end
 
   end
