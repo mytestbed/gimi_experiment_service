@@ -9,11 +9,13 @@ module GIMI::Resource
   class Experiment < OMF::SFA::Resource::OResource
     oproperty :iticket, GIMI::Resource::ITicket
 
+    has n, :slices, :model => GIMI::Resource::Slice
     belongs_to :project, OMF::SFA::Resource::Project, :required => false
 
     def to_hash_long(h, objs, opts = {})
       super
       h[:project] = self.project.to_hash_brief(opts)
+      h[:slices] = self.slices.map {|s| s.to_hash_brief(opts)}
       h
     end
 

@@ -1,6 +1,6 @@
 
 require 'omf-sfa/am/am-rest/rest_handler'
-#require 'omf-sfa/am/am-rest/experiment_handler'
+require 'gimi/exp_service/slice_handler'
 require 'gimi/resource/experiment'
 
 module GIMI::ExperimentService
@@ -20,7 +20,8 @@ module GIMI::ExperimentService
         project: lambda do |path, o| # This will force the showing of the SINGLE project
           path.insert(0, o[:context].project.uuid.to_s)
           @project_handler.find_handler(path, o)
-        end
+        end,
+        slices: (opts[:slice_handler] || SliceHandler.new(opts))
       }
 
     end

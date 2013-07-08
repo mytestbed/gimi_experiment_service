@@ -61,9 +61,15 @@ module GIMI::ExperimentService
       pA = OMF::SFA::Resource::Project.create(:name => 'projectA')
       pB = OMF::SFA::Resource::Project.create(:name => 'projectB')
 
+      require 'gimi/resource/slice'
+      s1 = GIMI::Resource::Slice.create(name: 'slice1',
+                                        urn: 'urn:publicid:IDN+exogeni.net:xxx',
+                                        valid_until: Time.now + 86400)
+
       require 'gimi/resource/experiment'
       e1 = GIMI::Resource::Experiment.create(:name => 'exp1', :project => pA)
       e1.iticket = GIMI::Resource::ITicket.create()
+      e1.slices << s1
       e1.save
 
       require 'omf-sfa/resource/user'

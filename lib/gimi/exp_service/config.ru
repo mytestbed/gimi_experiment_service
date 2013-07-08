@@ -35,6 +35,10 @@ map '/experiments' do
   run opts[:experiment_handler] || GIMI::ExperimentService::ExperimentHandler.new(opts)
 end
 
+map '/slices' do
+  require 'gimi/exp_service/slice_handler'
+  run opts[:slice_handler] || GIMI::ExperimentService::SliceHandler.new(opts)
+end
 
 if REQUIRE_LOGIN
   map '/login' do
