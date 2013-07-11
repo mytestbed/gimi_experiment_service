@@ -88,7 +88,7 @@ module GIMI::ExperimentService
 
       require 'gimi/resource/slice'
       s1 = GIMI::Resource::Slice.create(name: 'slice1',
-                                        urn: 'urn:publicid:IDN+exogeni.net:xxx',
+                                        urn: 'urn:publicid:IDN+ch.geni.net:GIMITesting+slice+slice1',
                                         valid_until: Time.now + 86400)
 
       require 'gimi/resource/experiment'

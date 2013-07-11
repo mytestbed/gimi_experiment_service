@@ -34,7 +34,7 @@ module GIMI::Resource
     def to_hash_brief(opts = {})
       #h = super
       h = {}
-      _oprops_to_hash(h, opts)
+      _oprops_to_hash(h, {}, opts)
     end
 
 

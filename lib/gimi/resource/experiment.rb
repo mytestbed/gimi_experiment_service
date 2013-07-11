@@ -14,10 +14,8 @@ module GIMI::Resource
 
     def to_hash_long(h, objs, opts = {})
       super
-      h[:project] = self.project.to_hash_brief(opts)
-      h[:slices] = self.slices.map {|s| s.to_hash_brief(opts)}
-raise "JSON deserialisation no longer working" unless JSON.load(Time.now.to_json).is_a? Time
-puts ">>>> EXP"
+      h[:project] = self.project.to_hash(objs, opts)
+      h[:slices] = self.slices.map {|s| s.to_hash(objs, opts)}
       h
     end
 
@@ -34,11 +32,10 @@ module OMF::SFA::Resource
 
     alias :__to_hash_long :to_hash_long
     def to_hash_long(h, objs, opts = {})
-      "HASH_LONG: #{opts}"
       super
       __to_hash_long(h, objs, opts)
       h[:experiments] = self.experiments.map do |e|
-        e.to_hash_brief(opts)
+        e.to_hash(objs, opts)
       end
       h
     end

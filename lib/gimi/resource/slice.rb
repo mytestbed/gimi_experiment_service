@@ -16,7 +16,7 @@ module GIMI::Resource
     def to_hash_long(h, objs, opts = {})
       super
       h[:urn] = self.urn || 'unknown'
-      h[:experiment] = self.experiment.to_hash_brief(opts)
+      h[:experiment] = self.experiment.to_hash(objs, opts)
       h
     end
 
