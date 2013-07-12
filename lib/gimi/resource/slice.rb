@@ -20,5 +20,10 @@ module GIMI::Resource
       h
     end
 
+    def to_hash_brief(opts = {})
+      h = super
+      h[:urn] = self.urn || 'unknown'
+      h
+    end
   end # classs
 end # module

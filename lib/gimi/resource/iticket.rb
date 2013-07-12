@@ -11,18 +11,14 @@ module GIMI::Resource
     oproperty :created_at, DataMapper::Property::Time
     oproperty :valid_until, DataMapper::Property::Time
 
+    belongs_to :experiment, GIMI::Resource::Experiment, :required => false
+
     @@def_duration = 100 * 86400 # 100 days
 
     def self.default_duration=(duration)
       @@def_duration = duration
     end
 
-
-    # def to_hash_long(h, objs, opts = {})
-      # super
-      # h[:project] = self.project.to_hash_brief(opts)
-      # h
-    # end
     def initialize(*args)
       super
       self.created_at = Time.now
@@ -32,12 +28,10 @@ module GIMI::Resource
     end
 
     def to_hash_brief(opts = {})
-      #h = super
-      h = {}
-      _oprops_to_hash(h, {}, opts)
+      h = super
+      h[:token] = self.token
+      h[:path] = self.path
+      h
     end
-
-
-
   end # classs
 end # module
