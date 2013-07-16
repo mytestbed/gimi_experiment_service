@@ -99,7 +99,7 @@ module GIMI::ExperimentService
 
       require 'omf-sfa/resource/user'
       u1 = OMF::SFA::Resource::User.create(:name => 'user1')
-      u2 = OMF::SFA::Resource::User.create(:name => 'user2')
+      u2 = OMF::SFA::Resource::User.create(:name => 'user2', uuid: "a7ecac90-3d4a-498b-927f-f9bee6bb3156")
 
 
       u1.projects << pA

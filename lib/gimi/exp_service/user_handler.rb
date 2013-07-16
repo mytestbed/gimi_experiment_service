@@ -39,6 +39,11 @@ module GIMI::ExperimentService
       context.save
     end
 
+    def add_resource_to_context(user, context)
+      debug "ADD #{user} to #{context}"
+      context.users << user
+      context.save
+    end
 
   end
 end
