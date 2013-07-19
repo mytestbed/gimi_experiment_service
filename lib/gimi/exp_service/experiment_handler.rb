@@ -60,22 +60,33 @@ module GIMI::ExperimentService
       show_resources(experiments, :experiments, opts)
     end
 
-    # Create a new experiment within a project. The experiment properties are
-    # contained in 'description'
-    #
-    def create_resource(description, opts)
-      unless (project = opts[:context]).is_a? OMF::SFA::Resource::Project
-        raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
-      end
-      if name = description[:name]
-        if (res = @resource_class.first(name: name, project: project))
-          return modify_resource(res, description, opts)
-        end
-      end
-
-      description[:project] = project
-      super
+    def remove_resource_from_context(experiment, context)
+      debug "REMOVE #{experiment} from #{context}"
+      context.experiments.delete(experiment)
+      context.save
     end
+
+    def add_resource_to_context(experiment, context)
+      debug "ADD #{experiment} to #{context}"
+      context.experiments << experiment
+      context.save
+    end
+    # # Create a new experiment within a project. The experiment properties are
+    # # contained in 'description'
+    # #
+    # def create_resource(description, opts)
+      # unless (project = opts[:context]).is_a? OMF::SFA::Resource::Project
+        # raise OMF::SFA::AM::Rest::BadRequestException.new "Can only create experiments in the context of a project"
+      # end
+      # if name = description[:name]
+        # if (res = @resource_class.first(name: name, project: project))
+          # return modify_resource(res, description, opts)
+        # end
+      # end
+#
+      # description[:project] = project
+      # super
+    # end
 
   end
 end
