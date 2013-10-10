@@ -8,14 +8,14 @@ module GIMI::Resource
     oproperty :path, String
 
     after :create do |exp|
-      exp.path = "/#{self.project.name}/#{self.name}/" unless exp.project.nil?
+      exp.path = "/geni-#{self.project.name}/#{self.name}/" unless exp.project.nil?
       exp.save
       info "After save: write to irods: #{exp.path}"
       begin
         `imkdir -p #{exp.path}`
       rescue => e
         error e.message
-        debug e.backtrace.join("\n")
+        #debug e.backtrace.join("\n")
       end
     end
 
