@@ -79,43 +79,24 @@ module GIMI::ExperimentService
       require  'dm-migrations'
       DataMapper.auto_migrate!
 
-      require 'omf-sfa/resource/oaccount'
+      #require 'omf-sfa/resource/oaccount'
       #account = am.find_or_create_account(:name => 'foo')
-      account = OMF::SFA::Resource::OAccount.create(:name => 'foo')
+      #account = OMF::SFA::Resource::OAccount.create(:name => 'foo')
+
+      require 'omf-sfa/resource/user'
+      u1 = OMF::SFA::Resource::User.create(:name => 'bob')
+      u2 = OMF::SFA::Resource::User.create(:name => 'user2', uuid: "a7ecac90-3d4a-498b-927f-f9bee6bb3156")
+
       require 'omf-sfa/resource/project'
       pA = OMF::SFA::Resource::Project.create(:name => 'projectA')
       pB = OMF::SFA::Resource::Project.create(:name => 'projectB')
-
-      require 'gimi/resource/slice'
-      s1 = GIMI::Resource::Slice.create(name: 'slice1',
-                                        urn: 'urn:publicid:IDN+ch.geni.net:GIMITesting+slice+slice1',
-                                        valid_until: Time.now + 86400)
-      s2 = GIMI::Resource::Slice.create(name: 'slice2',
-                                        urn: 'default_slice',
-                                        valid_until: Time.now + 86400)
-      s3 = GIMI::Resource::Slice.create(name: 'slice3',
-                                        urn: 'default_slice',
-                                        valid_until: Time.now + 86400)
 
       require 'gimi/resource/experiment'
       e1 = GIMI::Resource::Experiment.create(:name => 'exp1', :project => pA)
       e2 = GIMI::Resource::Experiment.create(:name => 'exp2', :project => pA)
 
-      require 'gimi/resource/iticket'
-      t1 =  GIMI::Resource::ITicket.create(:token => 'W4WxkspO1Bn3Qxy', :path => '/tempZone/home/rods/user1/exp1')
-      t2 =  GIMI::Resource::ITicket.create(:token => 'W4WxkspO1Bn3Qxy', :path => '/tempZone/home/rods/user1/exp2')
-      e1.iticket = t1
-      e1.slices << s1
-      e1.slices << s2
       e1.save
-
-      e2.iticket = t2
-      e2.slices << s3
       e2.save
-
-      require 'omf-sfa/resource/user'
-      u1 = OMF::SFA::Resource::User.create(:name => 'user1')
-      u2 = OMF::SFA::Resource::User.create(:name => 'user2', uuid: "a7ecac90-3d4a-498b-927f-f9bee6bb3156")
 
       u1.projects << pA
       u1.projects << pB
