@@ -4,18 +4,18 @@ require 'omf-sfa/resource/project'
 
 module GIMI::Resource
   class Experiment < OMF::SFA::Resource::OResource
-    belongs_to :project, OMF::SFA::Resource::Project, :required => false
+    belongs_to :project, :model => OMF::SFA::Resource::Project, :required => false
     oproperty :path, String
 
-    after :create do |exp|
-      exp.path = "/geni-#{self.project.name}/#{self.name}/" unless exp.project.nil?
-      exp.save
-      info "After save: write to irods: #{exp.path}"
-      begin
-        `imkdir -p #{exp.path}`
-      rescue => e
-        error e.message
-        #debug e.backtrace.join("\n")
+    before :save do |exp|
+      if exp.project
+        path = "/geni-#{exp.project.name}/#{exp.name}/"
+        info "Write save: write to irods: #{path}"
+        begin
+          `imkdir -p #{path}`
+        rescue => e
+          error e.message
+        end
       end
     end
 
@@ -30,10 +30,7 @@ module GIMI::Resource
 
     def to_hash_brief(opts = {})
       h = super
-      if self.project
-        h[:project_name] = self.project.name
-        h[:path] = self.path
-      end
+      h[:path] = "/geni-#{self.project.name}/#{self.name}/" if self.project
       h
     end
   end # classs
@@ -45,17 +42,33 @@ module OMF::SFA::Resource
   #
   class Project < OResource
     has n, :experiments, :model => GIMI::Resource::Experiment
+    oproperty :path, String
+
+    before :save do |proj|
+      path = "/geni-#{proj.name}/"
+      info "Before save: write to irods: #{path}"
+      begin
+        `imkdir -p #{path}`
+      rescue => e
+        error e.message
+      end
+    end
 
     alias :__to_hash_long :to_hash_long
     def to_hash_long(h, objs, opts = {})
       super
       __to_hash_long(h, objs, opts)
       h[:experiments] = self.experiments.map do |e|
-        e.to_hash(objs, opts)
+        e.to_hash_brief(opts)
       end
       h
     end
 
+    def to_hash_brief(opts = {})
+      h = super
+      h[:path] = "/geni-#{self.name}/"
+      h
+    end
   end
 end
 

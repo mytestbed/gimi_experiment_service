@@ -83,27 +83,15 @@ module GIMI::ExperimentService
       #account = am.find_or_create_account(:name => 'foo')
       #account = OMF::SFA::Resource::OAccount.create(:name => 'foo')
 
-      require 'omf-sfa/resource/user'
-      u1 = OMF::SFA::Resource::User.create(:name => 'bob')
-      u2 = OMF::SFA::Resource::User.create(:name => 'user2', uuid: "a7ecac90-3d4a-498b-927f-f9bee6bb3156")
-
       require 'omf-sfa/resource/project'
       pA = OMF::SFA::Resource::Project.create(:name => 'projectA')
       pB = OMF::SFA::Resource::Project.create(:name => 'projectB')
 
       require 'gimi/resource/experiment'
-      e1 = GIMI::Resource::Experiment.create(:name => 'exp1', :project => pA)
-      e2 = GIMI::Resource::Experiment.create(:name => 'exp2', :project => pA)
+      e1 = GIMI::Resource::Experiment.create(:name => 'exp1')
+      e2 = GIMI::Resource::Experiment.create(:name => 'exp2')
 
-      e1.save
-      e2.save
-
-      u1.projects << pA
-      u1.projects << pB
-      u1.save
-
-      u2.projects << pB
-      u2.save
+      pA.experiments << e1
     end
 
     def run(opts)
