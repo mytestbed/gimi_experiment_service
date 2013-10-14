@@ -43,6 +43,7 @@ module OMF::SFA::Resource
   class Project < OResource
     has n, :experiments, :model => GIMI::Resource::Experiment
     oproperty :path, String
+    oproperty :irods_user, String
 
     before :save do |proj|
       path = "/geni-#{proj.name}/"
@@ -51,6 +52,18 @@ module OMF::SFA::Resource
         `imkdir -p #{path}`
       rescue => e
         error e.message
+      end
+    end
+
+    after :save do |proj|
+      if proj.irods_user
+        info "After save: allow #{proj.irods_user} to access /geniRenci/home/geni-#{proj.name}/"
+
+        begin
+          `ichmod inherit own #{proj.irods_user} /geniRenci/home/geni-#{proj.name}/`
+        rescue => e
+          error e.message
+        end
       end
     end
 
@@ -67,6 +80,7 @@ module OMF::SFA::Resource
     def to_hash_brief(opts = {})
       h = super
       h[:path] = "/geni-#{self.name}/"
+      h[:irods_user] = self.irods_user
       h
     end
   end
