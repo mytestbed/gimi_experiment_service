@@ -23,7 +23,7 @@ module GIMI::Resource
       super
       if self.project
         h[:project] = self.project.to_hash_brief(opts)
-        h[:path] = self.path
+        h[:path] = "/geni-#{self.project.name}/#{self.name}/"
       end
       h
     end
