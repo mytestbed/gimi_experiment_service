@@ -9,7 +9,7 @@ module GIMI::Resource
 
     before :save do |exp|
       if exp.project
-        path = "/geni-#{exp.project.name}/#{exp.name}/"
+        path = "geni-#{exp.project.name}/#{exp.name}/"
         info "Write save: write to irods: #{path}"
         begin
           `imkdir -p #{path}`
@@ -23,14 +23,14 @@ module GIMI::Resource
       super
       if self.project
         h[:project] = self.project.to_hash_brief(opts)
-        h[:path] = "/geni-#{self.project.name}/#{self.name}/"
+        h[:path] = "geni-#{self.project.name}/#{self.name}/"
       end
       h
     end
 
     def to_hash_brief(opts = {})
       h = super
-      h[:path] = "/geni-#{self.project.name}/#{self.name}/" if self.project
+      h[:path] = "geni-#{self.project.name}/#{self.name}/" if self.project
       h
     end
   end # classs
@@ -46,7 +46,7 @@ module OMF::SFA::Resource
     oproperty :irods_user, String
 
     before :save do |proj|
-      path = "/geni-#{proj.name}/"
+      path = "geni-#{proj.name}/"
       info "Before save: write to irods: #{path}"
       begin
         `imkdir -p #{path}`
@@ -57,10 +57,10 @@ module OMF::SFA::Resource
 
     after :save do |proj|
       if proj.irods_user
-        info "After save: allow #{proj.irods_user} to access /geniRenci/home/geni-#{proj.name}/"
+        info "After save: allow #{proj.irods_user} to access geniRenci/home/geni-#{proj.name}/"
 
         begin
-          `ichmod inherit own #{proj.irods_user} /geniRenci/home/geni-#{proj.name}/`
+          `ichmod inherit own #{proj.irods_user} geniRenci/home/geni-#{proj.name}/`
         rescue => e
           error e.message
         end
@@ -79,7 +79,7 @@ module OMF::SFA::Resource
 
     def to_hash_brief(opts = {})
       h = super
-      h[:path] = "/geni-#{self.name}/"
+      h[:path] = "geni-#{self.name}/"
       h[:irods_user] = self.irods_user
       h
     end
