@@ -57,12 +57,14 @@ module OMF::SFA::Resource
 
     after :save do |proj|
       if proj.irods_user
-        info "After save: allow #{proj.irods_user} to access geniRenci/home/geni-#{proj.name}/"
+        proj.irods_user.split('|').each do |u|
+          info "After save: allow #{u} to access /geniRenci/home/gimiadmin/geni-#{proj.name}/"
 
-        begin
-          `ichmod inherit own #{proj.irods_user} geniRenci/home/geni-#{proj.name}/`
-        rescue => e
-          error e.message
+          begin
+            `ichmod -M own #{u} /geniRenci/home/gimiadmin/geni-#{proj.name}/`
+          rescue => e
+            error e.message
+          end
         end
       end
     end
