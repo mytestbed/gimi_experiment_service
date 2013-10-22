@@ -61,7 +61,8 @@ module OMF::SFA::Resource
           info "After save: allow #{u} to access /geniRenci/home/gimiadmin/geni-#{proj.name}/"
 
           begin
-            `ichmod -M own #{u} /geniRenci/home/gimiadmin/geni-#{proj.name}/`
+            `ichmod -M -r own #{u} /geniRenci/home/gimiadmin/geni-#{proj.name}/`
+            `ichmod inherit /geniRenci/home/gimiadmin/geni-#{proj.name}/`
           rescue => e
             error e.message
           end
