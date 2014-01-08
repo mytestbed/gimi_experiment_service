@@ -12,7 +12,7 @@ module GIMI::Resource
         path = "geni-#{exp.project.name}/#{exp.name}/"
         info "Write save: write to irods: #{path}"
         begin
-          `imkdir -p #{path}`
+          `imkdir -p "#{path}"`
         rescue => e
           error e.message
         end
@@ -49,7 +49,7 @@ module OMF::SFA::Resource
       path = "geni-#{proj.name}/"
       info "Before save: write to irods: #{path}"
       begin
-        `imkdir -p #{path}`
+        `imkdir -p "#{path}"`
       rescue => e
         error e.message
       end
@@ -61,8 +61,8 @@ module OMF::SFA::Resource
           info "After save: allow #{u} to access /geniRenci/home/gimiadmin/geni-#{proj.name}/"
 
           begin
-            `ichmod -M -r own #{u} /geniRenci/home/gimiadmin/geni-#{proj.name}/`
-            `ichmod inherit /geniRenci/home/gimiadmin/geni-#{proj.name}/`
+            `ichmod -M -r own #{u} "/geniRenci/home/gimiadmin/geni-#{proj.name}/"`
+            `ichmod inherit "/geniRenci/home/gimiadmin/geni-#{proj.name}/"`
           rescue => e
             error e.message
           end
