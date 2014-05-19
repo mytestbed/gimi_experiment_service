@@ -2,7 +2,7 @@
 GIMI Experiment Service
 =======================
 
-This directory contains the implementations of simple GIMI experiment service which 
+This directory contains the implementations of simple GIMI experiment service which
 allows for the manipulation and observation of experiments and their state.
 
 Installation
@@ -10,21 +10,25 @@ Installation
 
 At this stage the best course of action is to clone the repository
 
-    % git clone https://github.com/mytestbed/omf_sfa.git
-    % cd omf_sfa
-    % export OMF_SFA_HOME=`pwd`
-    % bundle install
-    % cd ..
     % git clone https://github.com/mytestbed/gimi_experiment_service.git
-    
+    % cd gimi_experiment_service
+    % bundle install --path vendor/bundle
+
 Starting the Service
 --------------------
 
 To start an AM with a some pre-populated resources ('--test-load-am') from this directory, run the following:
 
     % cd gimi_experiment_service
-    % ruby -I lib -I $OMF_SFA_HOME/lib lib/gimi/exp_service.rb --test-load-state  --dm-auto-upgrade --disable-https start
-    
+
+If you want to load some test data:
+
+    % ruby -I lib lib/gimi/exp_service.rb --test-load-state  --dm-auto-upgrade --disable-https start
+
+Otherwise, especially if you have an existing database, run without --test-loads-state option
+
+    % ruby -I lib lib/gimi/exp_service.rb --dm-auto-upgrade --disable-https start
+
 which should result in something like:
 
     DEBUG Server: options: {:app_name=>"exp_server", :chdir=>"/Users/max/src/gimi_experiment_service", :environment=>"development", :address=>"0.0.0.0", :port=>8002, :timeout=>30, :log=>"/tmp/exp_server_thin.log", :pid=>"/tmp/exp_server.pid", :max_conns=>1024, :max_persistent_conns=>512, :require=>[], :wait=>30, :rackup=>"/Users/max/src/gimi_experiment_service/lib/gimi/exp_service/config.ru", :static_dirs=>["./resources", "/Users/max/src/omf_sfa/lib/omf_common/thin/../../../share/htdocs"], :static_dirs_pre=>["./resources", "/Users/max/src/omf_sfa/lib/omf_common/thin/../../../share/htdocs"], :handlers=>{:pre_rackup=>#<Proc:0x007ffd0ab91388@/Users/max/src/gimi_experiment_service/lib/gimi/exp_service/server.rb:83 (lambda)>, :pre_parse=>#<Proc:0x007ffd0ab91360@/Users/max/src/gimi_experiment_service/lib/gimi/exp_service/server.rb:85 (lambda)>, :pre_run=>#<Proc:0x007ffd0ab91338@/Users/max/src/gimi_experiment_service/lib/gimi/exp_service/server.rb:94 (lambda)>}, :dm_db=>"sqlite:///tmp/gimi_test.db", :dm_log=>"/tmp/gimi_exp_server-dm.log", :load_test_state=>true, :dm_auto_upgrade=>true}
@@ -33,7 +37,7 @@ which should result in something like:
     DEBUG Server: >> Tracing ON
     INFO Server: >> Maximum connections set to 1024
     INFO Server: >> Listening on 0.0.0.0:8002, CTRL+C to stop
-    
+
 
 Testing REST API
 ----------------
@@ -57,7 +61,7 @@ resources. To list all projects:
         }
       ]
     }
-    
+
 To list information about a specific project 'projectA', use the following:
 
     $ curl http://localhost:8002/projects/projectA
@@ -99,7 +103,7 @@ More information about the users associated with a project can be obtained throu
         }
       ]
     }
-    
+
 The experiments created under a project can be obtained similarly:
 
     $ curl http://localhost:8002/projects/projectA/experiments
@@ -114,7 +118,7 @@ The experiments created under a project can be obtained similarly:
         }
       ]
     }
-    
+
 Exploring the experiments held by the service follows the same lines:
 
     $ curl http://localhost:8002/experiments
@@ -129,7 +133,7 @@ Exploring the experiments held by the service follows the same lines:
         }
       ]
     }
-    
+
     $ curl http://localhost:8002/experiments/exp1
     {
       "about": "/experiments/exp1",
@@ -148,7 +152,7 @@ Exploring the experiments held by the service follows the same lines:
         "type": "project"
       }
     }
-    
+
 And not surprisingly, the same works for users:
 
     $ curl http://localhost:8002/users
@@ -169,7 +173,7 @@ And not surprisingly, the same works for users:
         }
       ]
     }
-    
+
     $ curl http://localhost:8002/users/user1
     {
       "about": "/users/user1",
@@ -191,15 +195,15 @@ And not surprisingly, the same works for users:
           "type": "project"
         }
       ]
-    }    
+    }
 
 ### Adding and Modifying Resources
 
-To create a new resource in the context of an existing project, we need to send a POST 
+To create a new resource in the context of an existing project, we need to send a POST
 command to the _experiments_ collection.
 
-The simplest way is to request a new experiment with everything set to its default is to send an 
-empty POST message to the _experiments_ collection: 
+The simplest way is to request a new experiment with everything set to its default is to send an
+empty POST message to the _experiments_ collection:
 
     $ curl -X POST http://localhost:8002/projects/projectB/experiments
     {
@@ -215,17 +219,17 @@ empty POST message to the _experiments_ collection:
         "type": "project"
       }
     }
-     
-If we want to create an experiment with a predefined state, or modify an existing one, the following message 
+
+If we want to create an experiment with a predefined state, or modify an existing one, the following message
 content will achieve that:
 
     {
       "name": "exp3"
     }
-    
+
 If that message is stored in a file `test/new_expriment.json`, the following curl command will create a new
 or modify an existing experiment within _projectA_ with _name_ set to _exp3_.
-    
+
     $ curl -X POST -H "Content-Type: application/json" --data-binary @test/new_experiment.json http://localhost:8002/projects/projectB/experiments
     {
       "about": "/projects/projectB/experiments",
@@ -240,7 +244,7 @@ or modify an existing experiment within _projectA_ with _name_ set to _exp3_.
         "type": "project"
       }
     }
-                  
+
 The same can also be achieved with a form encoded POST message:
 
     $ curl -XPOST -d name=exp4 http://localhost:8002/projects/projectB/experiments
@@ -257,10 +261,10 @@ The same can also be achieved with a form encoded POST message:
         "type": "project"
       }
     }
-    
+
 ### Deleting Resources
 
-To delete a specific resource, simply send a `DELETE` message to its URL. For instance, to delete the above create _exp4_ 
+To delete a specific resource, simply send a `DELETE` message to its URL. For instance, to delete the above create _exp4_
 issue the following `curl` command.
 
     $ curl  -X DELETE http://localhost:8002/projects/projectA/experiments/exp1
