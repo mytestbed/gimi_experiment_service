@@ -23,11 +23,11 @@ To start an AM with a some pre-populated resources ('--test-load-am') from this 
 
 If you want to load some test data:
 
-    % ruby -I lib lib/gimi/exp_service.rb --test-load-state  --dm-auto-upgrade --disable-https start
+    % bundle exec ruby -I lib lib/gimi/exp_service.rb --test-load-state  --dm-auto-upgrade --disable-https start
 
 Otherwise, especially if you have an existing database, run without --test-loads-state option
 
-    % ruby -I lib lib/gimi/exp_service.rb --dm-auto-upgrade --disable-https start
+    % bundle exec ruby -I lib lib/gimi/exp_service.rb --dm-auto-upgrade --disable-https start
 
 which should result in something like:
 
