@@ -9,10 +9,10 @@ module GIMI::Resource
 
     before :save do |exp|
       if exp.project
-        path = "geni-#{exp.project.name}/#{exp.name}/"
-        info "Write save: write to irods: #{path}"
+        path = "\"geni-#{exp.project.name}/#{exp.name}/\""
+        info "Before save: Create irods folder: #{path}"
         begin
-          `imkdir -p "#{path}"`
+          `imkdir -p #{path}`
         rescue => e
           error e.message
         end
@@ -46,27 +46,12 @@ module OMF::SFA::Resource
     oproperty :irods_user, String
 
     before :save do |proj|
-      path = "geni-#{proj.name}/"
-      info "Before save: write to irods: #{path}"
+      path = "\"geni-#{proj.name}/\""
+      info "Before save: Create irods folder: #{path}"
       begin
-        `imkdir -p "#{path}"`
+        `imkdir -p #{path}`
       rescue => e
         error e.message
-      end
-    end
-
-    after :save do |proj|
-      if proj.irods_user
-        proj.irods_user.split('|').each do |u|
-          info "After save: allow #{u} to access /geniRenci/home/gimiadmin/geni-#{proj.name}/"
-
-          begin
-            `ichmod -M -r own #{u} "/geniRenci/home/gimiadmin/geni-#{proj.name}/"`
-            `ichmod inherit "/geniRenci/home/gimiadmin/geni-#{proj.name}/"`
-          rescue => e
-            error e.message
-          end
-        end
       end
     end
 
@@ -88,4 +73,3 @@ module OMF::SFA::Resource
     end
   end
 end
-
